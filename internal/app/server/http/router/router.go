@@ -5,6 +5,7 @@ import (
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/controllers"
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/middlewares"
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/repositories"
+	"github.com/IgorChicherin/gophkeeper/internal/app/server/usecases"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/authlib"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
@@ -30,7 +31,8 @@ func NewRouter(
 
 	userRepo := repositories.NewUserRepository(conn, authService)
 
-	auth := controllers.AuthController{UserRepository: userRepo, AuthService: authService}
+	userUseCase := usecases.NewUserUseCase(authService, userRepo)
+	auth := controllers.AuthController{UserUseCase: userUseCase}
 
 	api := router.Group("/api")
 	{

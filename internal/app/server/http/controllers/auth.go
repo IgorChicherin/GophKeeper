@@ -1,16 +1,16 @@
 package controllers
 
 import (
+	"errors"
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/models"
-	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/repositories"
-	"github.com/IgorChicherin/gophkeeper/internal/pkg/authlib"
-	"github.com/gin-gonic/gin"
+	"github.com/IgorChicherin/gophkeeper/internal/app/server/usecases"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type AuthController struct {
-	UserRepository repositories.UserRepository
-	AuthService    authlib.AuthService
+	UserUseCase usecases.UserUseCase
 }
 
 func (ac AuthController) Route(api *gin.RouterGroup) {
@@ -42,7 +42,7 @@ func (ac AuthController) login(c *gin.Context) {
 		return
 	}
 
-	hasLogin, err := ac.UserRepository.HasLogin(userData.Login)
+	token, err := ac.UserUseCase.Login(userData.Login, userData.Password)
 
 	if err != nil {
 		controllerLog(c).WithError(err).Errorln("user repository error")
@@ -50,25 +50,11 @@ func (ac AuthController) login(c *gin.Context) {
 		return
 	}
 
-	if !hasLogin {
+	if errors.Is(err, usecases.ErrUserNotFound) || errors.Is(err, usecases.ErrUnauthorized) {
 		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
 
-	user, err := ac.UserRepository.GetUser(userData.Login)
-
-	if err != nil {
-		controllerLog(c).WithError(err).Errorln("user repository error")
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-
-	if !ac.AuthService.Equals(user.Password, userData.Password) {
-		c.AbortWithStatus(http.StatusUnauthorized)
-		return
-	}
-
-	token := ac.AuthService.EncodeToken(user.Login, user.Password)
 	c.Header("Authorization", token)
 	c.Status(http.StatusOK)
 }
@@ -95,7 +81,12 @@ func (ac AuthController) register(c *gin.Context) {
 		return
 	}
 
-	hasLogin, err := ac.UserRepository.HasLogin(userData.Login)
+	token, err := ac.UserUseCase.Register(userData.Login, userData.Password)
+
+	if errors.Is(err, usecases.ErrUserHasBeenRegistered) {
+		c.AbortWithStatusJSON(http.StatusConflict, map[string]string{"error": "user with this login has been created"})
+		return
+	}
 
 	if err != nil {
 		controllerLog(c).WithError(err).Errorln("user repository error")
@@ -103,21 +94,6 @@ func (ac AuthController) register(c *gin.Context) {
 		return
 	}
 
-	if hasLogin {
-		c.AbortWithStatusJSON(http.StatusConflict, map[string]string{"error": "user with this login has been created"})
-		return
-	}
-
-	createdUser, err := ac.UserRepository.CreateUser(userData.Login, userData.Password)
-
-	if err != nil {
-		controllerLog(c).WithError(err).Errorln("create user error")
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-
-	token := ac.AuthService.EncodeToken(createdUser.Login, createdUser.Password)
 	c.Header("Authorization", token)
-
-	c.Status(http.StatusOK)
+	c.AbortWithStatus(http.StatusOK)
 }
