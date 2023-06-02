@@ -1,0 +1,4 @@
+BEGIN;
+    DROP TABLE IF EXISTS user_data CASCADE;
+    DROP TYPE IF EXISTS user_data_type;
+COMMIT;
