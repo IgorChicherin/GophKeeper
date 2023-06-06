@@ -3,7 +3,7 @@ package usecases
 import (
 	"errors"
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/models"
-	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/repositories"
+	"github.com/IgorChicherin/gophkeeper/internal/app/server/repositories"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/authlib"
 
 	log "github.com/sirupsen/logrus"

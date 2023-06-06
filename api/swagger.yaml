@@ -4,11 +4,16 @@ definitions:
       error:
         type: string
     type: object
-  models.Login:
+  models.LoginRequest:
     properties:
       login:
         type: string
       password:
+        type: string
+    type: object
+  models.LoginResponse:
+    properties:
+      crt:
         type: string
     type: object
   models.User:
@@ -36,12 +41,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/models.Login'
+          $ref: '#/definitions/models.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/models.LoginResponse'
         "400":
           description: Bad Request
         "401":

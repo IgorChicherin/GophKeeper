@@ -5,6 +5,7 @@ import (
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/router"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/authlib/sha256"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/config"
+	"github.com/IgorChicherin/gophkeeper/internal/pkg/crypto/crypto509"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/db"
 	"github.com/jackc/pgx/v4"
 	log "github.com/sirupsen/logrus"
@@ -16,6 +17,14 @@ import (
 
 func main() {
 	cfg, err := config.GetServerConfig()
+
+	certsManager := crypto509.NewCertsManager(cfg.PrivateCertPath, cfg.PublicCertPath)
+
+	_, public, err := certsManager.GetCerts()
+
+	if err != nil {
+		log.Fatalf("unable to load certs: %s", err)
+	}
 
 	if err != nil {
 		log.Fatalf("unable to config server: %s", err)
@@ -51,7 +60,7 @@ func main() {
 
 	srv := &http.Server{
 		Addr:    cfg.Address,
-		Handler: router.NewRouter(conn, hashService),
+		Handler: router.NewRouter(conn, hashService, public),
 	}
 
 	go func() {

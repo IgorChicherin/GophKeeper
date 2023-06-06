@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/repositories"
+	"github.com/IgorChicherin/gophkeeper/internal/app/server/repositories"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

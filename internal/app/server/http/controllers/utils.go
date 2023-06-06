@@ -3,7 +3,7 @@ package controllers
 import (
 	"errors"
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/models"
-	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/repositories"
+	"github.com/IgorChicherin/gophkeeper/internal/app/server/repositories"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"net/http"

@@ -5,9 +5,11 @@ import (
 )
 
 type ServerConfig struct {
-	Database string `json:"database"`
-	Address  string `json:"address"`
-	Key      string `json:"key"`
+	Database        string `mapstructure:"database"`
+	Address         string `mapstructure:"address"`
+	Key             string `mapstructure:"key"`
+	PrivateCertPath string `mapstructure:"private_cert"`
+	PublicCertPath  string `mapstructure:"public_cert"`
 }
 
 func GetServerConfig() (ServerConfig, error) {
@@ -18,7 +20,6 @@ func GetServerConfig() (ServerConfig, error) {
 	}
 
 	cnf := ServerConfig{}
-
 	if err := v.Unmarshal(&cnf); err != nil {
 		log.Errorln(err)
 		return ServerConfig{}, err

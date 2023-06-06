@@ -11,6 +11,7 @@ import (
 
 type AuthController struct {
 	UserUseCase usecases.UserUseCase
+	PublicCert  string
 }
 
 func (ac AuthController) Route(api *gin.RouterGroup) {
@@ -29,12 +30,12 @@ func (ac AuthController) Route(api *gin.RouterGroup) {
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param input body models.Login true "login"
-// @Success 200
+// @Param input body models.LoginRequest true "login"
+// @Success 200 {object} models.LoginResponse
 // @Failure 400,401,500
 // @Router /user/login [post]
 func (ac AuthController) login(c *gin.Context) {
-	var userData models.Login
+	var userData models.LoginRequest
 
 	if err := c.ShouldBind(&userData); err != nil {
 		controllerLog(c).WithError(err).Errorln("can't parse request")
@@ -56,7 +57,7 @@ func (ac AuthController) login(c *gin.Context) {
 	}
 
 	c.Header("Authorization", token)
-	c.Status(http.StatusOK)
+	c.AbortWithStatusJSON(http.StatusOK, models.LoginResponse{Crt: ac.PublicCert})
 }
 
 // @BasePath /api

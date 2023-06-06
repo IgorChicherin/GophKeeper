@@ -36,13 +36,16 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Login"
+                            "$ref": "#/definitions/models.LoginRequest"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.LoginResponse"
+                        }
                     },
                     "400": {
                         "description": "Bad Request"
@@ -115,13 +118,21 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Login": {
+        "models.LoginRequest": {
             "type": "object",
             "properties": {
                 "login": {
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "crt": {
                     "type": "string"
                 }
             }

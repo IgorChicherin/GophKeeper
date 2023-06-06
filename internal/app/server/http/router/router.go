@@ -4,7 +4,7 @@ import (
 	docs "github.com/IgorChicherin/gophkeeper/api"
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/controllers"
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/middlewares"
-	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/repositories"
+	"github.com/IgorChicherin/gophkeeper/internal/app/server/repositories"
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/usecases"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/authlib"
 	"github.com/gin-contrib/gzip"
@@ -17,6 +17,7 @@ import (
 func NewRouter(
 	conn *pgx.Conn,
 	authService authlib.AuthService,
+	publicKey []byte,
 ) *gin.Engine {
 	router := gin.New()
 	router.RedirectTrailingSlash = false
@@ -32,7 +33,7 @@ func NewRouter(
 	userRepo := repositories.NewUserRepository(conn, authService)
 
 	userUseCase := usecases.NewUserUseCase(authService, userRepo)
-	auth := controllers.AuthController{UserUseCase: userUseCase}
+	auth := controllers.AuthController{UserUseCase: userUseCase, PublicCert: string(publicKey)}
 
 	api := router.Group("/api")
 	{
