@@ -50,13 +50,13 @@ func (u userUseCase) Validate(hash string) (bool, error) {
 }
 
 func (u userUseCase) GetUser(token string) (models.User, error) {
-	login, hash, err := u.AuthService.DecodeToken(token)
+	login, _, err := u.AuthService.DecodeToken(token)
 
 	if err != nil {
 		return models.User{}, err
 	}
 
-	isCorrectPwd, err := u.Validate(hash)
+	isCorrectPwd, err := u.Validate(token)
 
 	if err != nil {
 		return models.User{}, err
@@ -90,7 +90,7 @@ func (u userUseCase) Login(login, password string) (string, error) {
 		return "", ErrUnauthorized
 	}
 
-	return u.AuthService.EncodeToken(login, password), nil
+	return u.AuthService.EncodeToken(login, user.Password), nil
 }
 
 func (u userUseCase) Register(login, password string) (string, error) {

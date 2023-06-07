@@ -18,6 +18,7 @@ type EncrypterServiceTestSuite struct {
 	msg                string
 	encryptedMsg       string
 	publicKey          string
+	privateKey         string
 	enc                Encrypter
 }
 
@@ -26,12 +27,8 @@ func (suite *EncrypterServiceTestSuite) SetupTest() {
 	suite.Assert().NotEmpty(suite.publicKeyCertPath)
 	suite.Assert().NotEmpty(suite.msg)
 
-	suite.createKeys()
-
-	publicKeyPEM, err := os.ReadFile(suite.publicKeyCertPath)
-	if err != nil {
-		panic(err)
-	}
+	manager := NewCertsManager(suite.privateKeyCertPath, suite.publicKeyCertPath)
+	privateKeyPEM, publicKeyPEM, err := manager.GenerateKeyFiles()
 
 	publicKeyBlock, _ := pem.Decode(publicKeyPEM)
 
@@ -49,7 +46,7 @@ func (suite *EncrypterServiceTestSuite) SetupTest() {
 
 	suite.encryptedMsg = string(ciphertext)
 
-	encrypt, err := NewEncrypter(suite.publicKeyCertPath)
+	encrypt, err := NewEncrypter(publicKeyPEM)
 
 	if err != nil {
 		suite.Errorf(err, "encrypter create error")
@@ -58,12 +55,14 @@ func (suite *EncrypterServiceTestSuite) SetupTest() {
 	suite.enc = encrypt
 
 	suite.publicKey = string(publicKeyPEM)
+	suite.privateKey = string(privateKeyPEM)
 }
 
 func (suite *EncrypterServiceTestSuite) TearDownSuite() {
 	suite.deleteKeys()
 	suite.encryptedMsg = ""
 	suite.publicKey = ""
+	suite.privateKey = ""
 	suite.enc = nil
 }
 
@@ -99,7 +98,7 @@ func (suite *EncrypterServiceTestSuite) TestEncryptData() {
 	encData, err := suite.enc.EncryptData(suite.msg)
 	suite.Assert().Equal(err, nil)
 
-	newDec, err := NewDecrypter(suite.privateKeyCertPath)
+	newDec, err := NewDecrypter([]byte(suite.privateKey))
 	suite.Assert().Equal(err, nil)
 
 	decMsg, err := newDec.DecryptData([]byte(encData))

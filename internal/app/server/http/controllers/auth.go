@@ -57,7 +57,7 @@ func (ac AuthController) login(c *gin.Context) {
 	}
 
 	c.Header("Authorization", token)
-	c.AbortWithStatusJSON(http.StatusOK, models.LoginResponse{Crt: ac.PublicCert})
+	c.AbortWithStatusJSON(http.StatusOK, models.LoginResponse{Crt: ac.PublicCert, Token: token})
 }
 
 // @BasePath /api

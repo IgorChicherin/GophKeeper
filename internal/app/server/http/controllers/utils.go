@@ -2,8 +2,9 @@ package controllers
 
 import (
 	"errors"
+	"fmt"
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/models"
-	"github.com/IgorChicherin/gophkeeper/internal/app/server/repositories"
+	"github.com/IgorChicherin/gophkeeper/internal/app/server/usecases"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"net/http"
@@ -23,7 +24,7 @@ func controllerLog(c *gin.Context) *log.Entry {
 	return entry
 }
 
-func GetUser(c *gin.Context, userRepo repositories.UserRepository) (models.User, error) {
+func GetUser(c *gin.Context, userUseCase usecases.UserUseCase) (models.User, error) {
 	token := c.GetHeader("Authorization")
 
 	if token == "" {
@@ -32,20 +33,13 @@ func GetUser(c *gin.Context, userRepo repositories.UserRepository) (models.User,
 		return models.User{}, errors.New("unauthorized")
 	}
 
-	login, _, err := userRepo.DecodeToken(token)
+	user, err := userUseCase.GetUser(token)
 
 	if err != nil {
-		controllerLog(c).WithError(err).Errorln("can't decode token")
+		controllerLog(c).WithError(err).Errorln(err)
 		c.AbortWithStatus(http.StatusInternalServerError)
-		return models.User{}, errors.New("can't decode token")
+		return models.User{}, errors.New(fmt.Sprintf("can't decode token: %s", err))
 	}
 
-	user, err := userRepo.GetUser(login)
-
-	if err != nil {
-		controllerLog(c).WithError(err).Errorln("getting user error")
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return models.User{}, errors.New("getting user error")
-	}
 	return user, nil
 }

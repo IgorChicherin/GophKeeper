@@ -20,7 +20,7 @@ func main() {
 
 	certsManager := crypto509.NewCertsManager(cfg.PrivateCertPath, cfg.PublicCertPath)
 
-	_, public, err := certsManager.GetCerts()
+	private, public, err := certsManager.GetCerts()
 
 	if err != nil {
 		log.Fatalf("unable to load certs: %s", err)
@@ -57,10 +57,15 @@ func main() {
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
 	hashService := sha256.NewSha256HashService(cfg.Key)
+	decrypter, err := crypto509.NewDecrypter(private)
+
+	if err != nil {
+		log.Fatalf("unable to create encrypting service: %s", err)
+	}
 
 	srv := &http.Server{
 		Addr:    cfg.Address,
-		Handler: router.NewRouter(conn, hashService, public),
+		Handler: router.NewRouter(conn, hashService, public, decrypter),
 	}
 
 	go func() {

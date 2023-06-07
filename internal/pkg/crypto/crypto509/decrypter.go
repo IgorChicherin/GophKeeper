@@ -5,7 +5,6 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"os"
 )
 
 type Decrypter interface {
@@ -13,14 +12,8 @@ type Decrypter interface {
 	GetPrivateKey() string
 }
 
-func NewDecrypter(privateKeyFileName string) (Decrypter, error) {
-
-	privateKeyPEM, err := os.ReadFile(privateKeyFileName)
-	if err != nil {
-		return nil, err
-	}
-
-	return decrypter{privateKey: string(privateKeyPEM)}, nil
+func NewDecrypter(privateKey []byte) (Decrypter, error) {
+	return decrypter{privateKey: string(privateKey)}, nil
 }
 
 type decrypter struct {

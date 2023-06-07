@@ -6,5 +6,6 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	Crt string `json:"crt"`
+	Token string `json:"token"`
+	Crt   string `json:"crt"`
 }

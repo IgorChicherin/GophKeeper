@@ -26,13 +26,8 @@ func (suite *DecrypterServiceTestSuite) SetupSuite() {
 	suite.Assert().NotEmpty(suite.publicKeyCertPath)
 	suite.Assert().NotEmpty(suite.msg)
 
-	suite.createKeys()
-
-	publicKeyPEM, err := os.ReadFile(suite.publicKeyCertPath)
-	if err != nil {
-		panic(err)
-	}
-
+	manager := NewCertsManager(suite.privateKeyCertPath, suite.publicKeyCertPath)
+	privateKeyPEM, publicKeyPEM, err := manager.GenerateKeyFiles()
 	publicKeyBlock, _ := pem.Decode(publicKeyPEM)
 
 	k, err := x509.ParsePKIXPublicKey(publicKeyBlock.Bytes)
@@ -49,18 +44,13 @@ func (suite *DecrypterServiceTestSuite) SetupSuite() {
 
 	suite.encryptedMsg = string(ciphertext)
 
-	decrypt, err := NewDecrypter(suite.privateKeyCertPath)
+	decrypt, err := NewDecrypter(privateKeyPEM)
 
 	if err != nil {
 		suite.Errorf(err, "decryper create error")
 	}
 
 	suite.dec = decrypt
-
-	privateKeyPEM, err := os.ReadFile(suite.privateKeyCertPath)
-	if err != nil {
-		panic(err)
-	}
 
 	suite.privateKey = string(privateKeyPEM)
 }
@@ -70,13 +60,6 @@ func (suite *DecrypterServiceTestSuite) TearDownSuite() {
 	suite.encryptedMsg = ""
 	suite.privateKey = ""
 	suite.dec = nil
-}
-
-func (suite *DecrypterServiceTestSuite) createKeys() {
-	manager := NewCertsManager(suite.privateKeyCertPath, suite.publicKeyCertPath)
-	if _, _, err := manager.GenerateKeyFiles(); err != nil {
-		suite.Errorf(err, "write key file error")
-	}
 }
 
 func (suite *DecrypterServiceTestSuite) deleteKeys() {

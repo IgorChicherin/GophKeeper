@@ -5,7 +5,6 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"os"
 )
 
 type Encrypter interface {
@@ -13,13 +12,8 @@ type Encrypter interface {
 	GetPublicKey() string
 }
 
-func NewEncrypter(publicKeyFileName string) (Encrypter, error) {
-	publicKeyPEM, err := os.ReadFile(publicKeyFileName)
-	if err != nil {
-		return nil, err
-	}
-
-	return encrypter{publicKey: string(publicKeyPEM)}, nil
+func NewEncrypter(publicKey []byte) (Encrypter, error) {
+	return encrypter{publicKey: string(publicKey)}, nil
 }
 
 type encrypter struct {
