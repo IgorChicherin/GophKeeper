@@ -3,8 +3,8 @@ package controllers
 import (
 	"errors"
 	"fmt"
-	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/models"
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/usecases"
+	"github.com/IgorChicherin/gophkeeper/internal/pkg/db/models"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"net/http"

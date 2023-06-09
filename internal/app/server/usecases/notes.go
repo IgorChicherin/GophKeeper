@@ -2,14 +2,15 @@ package usecases
 
 import (
 	"encoding/base64"
-	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/models"
+	http_models "github.com/IgorChicherin/gophkeeper/internal/app/server/http/models"
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/repositories"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/crypto/crypto509"
+	"github.com/IgorChicherin/gophkeeper/internal/pkg/db/models"
 )
 
 type NotesUseCase interface {
-	CreateUserNote(user models.User, req models.CreateNoteRequest) (models.Note, error)
-	GetNote(user models.User, noteID int) (models.CreateNoteRequest, error)
+	CreateUserNote(user models.User, req http_models.CreateNoteRequest) (models.Note, error)
+	GetNote(user models.User, noteID int) (http_models.CreateNoteRequest, error)
 	GetUserNotes(user models.User) ([]models.Note, error)
 }
 
@@ -22,7 +23,7 @@ func NewNotesUseCase(notesRepo repositories.NotesRepository, dec crypto509.Decry
 	return notesUseCase{NotesRepo: notesRepo, Decrypter: dec}
 }
 
-func (n notesUseCase) CreateUserNote(user models.User, req models.CreateNoteRequest) (models.Note, error) {
+func (n notesUseCase) CreateUserNote(user models.User, req http_models.CreateNoteRequest) (models.Note, error) {
 	data, err := base64.StdEncoding.DecodeString(req.Data)
 	if err != nil {
 		return models.Note{}, err
@@ -35,13 +36,13 @@ func (n notesUseCase) CreateUserNote(user models.User, req models.CreateNoteRequ
 	})
 }
 
-func (n notesUseCase) GetNote(user models.User, noteID int) (models.CreateNoteRequest, error) {
+func (n notesUseCase) GetNote(user models.User, noteID int) (http_models.CreateNoteRequest, error) {
 	note, err := n.NotesRepo.GetNote(user.UserID, noteID)
 	if err != nil {
-		return models.CreateNoteRequest{}, err
+		return http_models.CreateNoteRequest{}, err
 	}
 	data := base64.StdEncoding.EncodeToString(note.Data)
-	return models.CreateNoteRequest{
+	return http_models.CreateNoteRequest{
 		Metadata: note.Metadata,
 		DataType: note.DataType,
 		Data:     data,

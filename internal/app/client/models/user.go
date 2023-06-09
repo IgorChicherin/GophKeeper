@@ -1,11 +1,11 @@
 package models
 
-type LoginRequest struct {
+type RequestUserModel struct {
 	Login    string `json:"login"`
 	Password string `json:"password"`
 }
 
-type LoginResponse struct {
+type ResponseUserLogin struct {
 	Token string `json:"token"`
 	Cert  string `json:"cert"`
 }

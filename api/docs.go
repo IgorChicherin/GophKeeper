@@ -169,7 +169,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.UserRequest"
                         }
                     }
                 ],
@@ -222,7 +222,7 @@ const docTemplate = `{
         "models.LoginResponse": {
             "type": "object",
             "properties": {
-                "crt": {
+                "cert": {
                     "type": "string"
                 },
                 "token": {
@@ -259,20 +259,14 @@ const docTemplate = `{
                 }
             }
         },
-        "models.User": {
+        "models.UserRequest": {
             "type": "object",
             "properties": {
-                "created_at": {
-                    "type": "string"
-                },
                 "login": {
                     "type": "string"
                 },
                 "password": {
                     "type": "string"
-                },
-                "user_id": {
-                    "type": "integer"
                 }
             }
         }

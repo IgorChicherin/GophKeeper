@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"context"
-	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/models"
+	"github.com/IgorChicherin/gophkeeper/internal/pkg/db/models"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v4"
 	log "github.com/sirupsen/logrus"

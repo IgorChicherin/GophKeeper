@@ -2,9 +2,9 @@ package usecases
 
 import (
 	"errors"
-	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/models"
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/repositories"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/authlib"
+	"github.com/IgorChicherin/gophkeeper/internal/pkg/db/models"
 
 	log "github.com/sirupsen/logrus"
 )

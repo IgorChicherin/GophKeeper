@@ -57,7 +57,7 @@ func (ac AuthController) login(c *gin.Context) {
 	}
 
 	c.Header("Authorization", token)
-	c.AbortWithStatusJSON(http.StatusOK, models.LoginResponse{Crt: ac.PublicCert, Token: token})
+	c.AbortWithStatusJSON(http.StatusOK, models.LoginResponse{Cert: ac.PublicCert, Token: token})
 }
 
 // @BasePath /api
@@ -68,13 +68,13 @@ func (ac AuthController) login(c *gin.Context) {
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param input body models.User true "user account"
+// @Param input body models.UserRequest true "user account"
 // @Success 200
 // @Failure 404,500
 // @Failure 400,409 {object} models.DefaultErrorResponse
 // @Router /user/register [post]
 func (ac AuthController) register(c *gin.Context) {
-	var userData models.User
+	var userData models.UserRequest
 
 	if err := c.ShouldBind(&userData); err != nil {
 		controllerLog(c).WithError(err).Errorln("can't parse request")

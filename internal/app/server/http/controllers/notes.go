@@ -4,12 +4,13 @@ import (
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/middlewares"
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/models"
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/usecases"
+	models2 "github.com/IgorChicherin/gophkeeper/internal/shared/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type getNodeURI struct {
-	NodeID int `uri:"nodeID"`
+	NoteID int `uri:"noteID"`
 }
 
 type NotesController struct {
@@ -21,9 +22,9 @@ func (nc NotesController) Route(api *gin.RouterGroup) {
 	middleware := middlewares.AuthMiddleware(nc.UserUseCase)
 	notes := api.Group("/notes").Use(middleware)
 	{
-		notes.POST("/create", nc.CreateNote)
-		notes.GET("/:nodeID", nc.GetNote)
-		notes.GET("", nc.GetNotes)
+		notes.POST("/create", nc.createNote)
+		notes.GET("/:noteID", nc.getNote)
+		notes.GET("", nc.getNotes)
 	}
 }
 
@@ -39,7 +40,7 @@ func (nc NotesController) Route(api *gin.RouterGroup) {
 // @Success 200 {object} models.Note
 // @Failure 400,401 {object} models.DefaultErrorResponse
 // @Router /notes/create [post]
-func (nc NotesController) CreateNote(c *gin.Context) {
+func (nc NotesController) createNote(c *gin.Context) {
 	user, err := GetUser(c, nc.UserUseCase)
 	if err != nil {
 		controllerLog(c).WithError(err).Errorln("can't get user")
@@ -49,7 +50,7 @@ func (nc NotesController) CreateNote(c *gin.Context) {
 	var req models.CreateNoteRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		controllerLog(c).WithError(err).Errorln("can't parse data")
-		c.AbortWithStatusJSON(http.StatusBadRequest, models.DefaultErrorResponse{
+		c.AbortWithStatusJSON(http.StatusBadRequest, models2.DefaultErrorResponse{
 			Error: err.Error(),
 		})
 		return
@@ -58,7 +59,7 @@ func (nc NotesController) CreateNote(c *gin.Context) {
 	note, err := nc.NotesUseCase.CreateUserNote(user, req)
 	if err != nil {
 		controllerLog(c).WithError(err).Errorln("can't create note")
-		c.AbortWithStatusJSON(http.StatusInternalServerError, models.DefaultErrorResponse{
+		c.AbortWithStatusJSON(http.StatusInternalServerError, models2.DefaultErrorResponse{
 			Error: err.Error(),
 		})
 		return
@@ -78,10 +79,10 @@ func (nc NotesController) CreateNote(c *gin.Context) {
 // @Success 200 {object} models.Note
 // @Success 204
 // @Router /notes/:noteID [get]
-func (nc NotesController) GetNote(c *gin.Context) {
+func (nc NotesController) getNote(c *gin.Context) {
 	user, err := GetUser(c, nc.UserUseCase)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, models.DefaultErrorResponse{
+		c.AbortWithStatusJSON(http.StatusInternalServerError, models2.DefaultErrorResponse{
 			Error: err.Error(),
 		})
 		return
@@ -91,15 +92,15 @@ func (nc NotesController) GetNote(c *gin.Context) {
 
 	err = c.BindUri(&nodeURIParams)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, models.DefaultErrorResponse{
+		c.AbortWithStatusJSON(http.StatusBadRequest, models2.DefaultErrorResponse{
 			Error: err.Error(),
 		})
 		return
 	}
 
-	node, err := nc.NotesUseCase.GetNote(user, nodeURIParams.NodeID)
+	node, err := nc.NotesUseCase.GetNote(user, nodeURIParams.NoteID)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, models.DefaultErrorResponse{
+		c.AbortWithStatusJSON(http.StatusBadRequest, models2.DefaultErrorResponse{
 			Error: err.Error(),
 		})
 		return
@@ -119,7 +120,7 @@ func (nc NotesController) GetNote(c *gin.Context) {
 // @Success 200 {json} []models.Note
 // @Success 204
 // @Router /notes [get]
-func (nc NotesController) GetNotes(c *gin.Context) {
+func (nc NotesController) getNotes(c *gin.Context) {
 	user, err := GetUser(c, nc.UserUseCase)
 	if err != nil {
 		controllerLog(c).WithError(err).Errorln("can't get user")
@@ -129,7 +130,7 @@ func (nc NotesController) GetNotes(c *gin.Context) {
 	notes, err := nc.NotesUseCase.GetUserNotes(user)
 	if err != nil {
 		controllerLog(c).WithError(err).Errorln("get notes error")
-		c.AbortWithStatusJSON(http.StatusInternalServerError, models.DefaultErrorResponse{
+		c.AbortWithStatusJSON(http.StatusInternalServerError, models2.DefaultErrorResponse{
 			Error: err.Error(),
 		})
 		return

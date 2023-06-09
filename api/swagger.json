@@ -157,7 +157,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.UserRequest"
                         }
                     }
                 ],
@@ -210,7 +210,7 @@
         "models.LoginResponse": {
             "type": "object",
             "properties": {
-                "crt": {
+                "cert": {
                     "type": "string"
                 },
                 "token": {
@@ -247,20 +247,14 @@
                 }
             }
         },
-        "models.User": {
+        "models.UserRequest": {
             "type": "object",
             "properties": {
-                "created_at": {
-                    "type": "string"
-                },
                 "login": {
                     "type": "string"
                 },
                 "password": {
                     "type": "string"
-                },
-                "user_id": {
-                    "type": "integer"
                 }
             }
         }
