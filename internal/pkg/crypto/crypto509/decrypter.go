@@ -8,7 +8,7 @@ import (
 )
 
 type Decrypter interface {
-	DecryptData(data []byte) (string, error)
+	DecryptData(data []byte) ([]byte, error)
 	GetPrivateKey() string
 }
 
@@ -20,19 +20,19 @@ type decrypter struct {
 	privateKey string
 }
 
-func (d decrypter) DecryptData(data []byte) (string, error) {
+func (d decrypter) DecryptData(data []byte) ([]byte, error) {
 	privateKeyBlock, _ := pem.Decode([]byte(d.privateKey))
 	privateKey, err := x509.ParsePKCS1PrivateKey(privateKeyBlock.Bytes)
 
 	if err != nil {
-		return "", err
+		return []byte{}, err
 	}
 
 	plaintext, err := rsa.DecryptPKCS1v15(rand.Reader, privateKey, data)
 	if err != nil {
-		return "", err
+		return []byte{}, err
 	}
-	return string(plaintext), nil
+	return plaintext, nil
 }
 
 func (d decrypter) GetPrivateKey() string {

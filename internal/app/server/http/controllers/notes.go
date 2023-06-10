@@ -2,9 +2,8 @@ package controllers
 
 import (
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/middlewares"
-	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/models"
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/usecases"
-	models2 "github.com/IgorChicherin/gophkeeper/internal/shared/models"
+	"github.com/IgorChicherin/gophkeeper/internal/shared/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -37,7 +36,7 @@ func (nc NotesController) Route(api *gin.RouterGroup) {
 // @Accept json
 // @Produce json
 // @Success 204
-// @Success 200 {object} models.Note
+// @Success 200 {object} models.CreateNoteRequest
 // @Failure 400,401 {object} models.DefaultErrorResponse
 // @Router /notes/create [post]
 func (nc NotesController) createNote(c *gin.Context) {
@@ -50,7 +49,7 @@ func (nc NotesController) createNote(c *gin.Context) {
 	var req models.CreateNoteRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		controllerLog(c).WithError(err).Errorln("can't parse data")
-		c.AbortWithStatusJSON(http.StatusBadRequest, models2.DefaultErrorResponse{
+		c.AbortWithStatusJSON(http.StatusBadRequest, models.DefaultErrorResponse{
 			Error: err.Error(),
 		})
 		return
@@ -59,7 +58,7 @@ func (nc NotesController) createNote(c *gin.Context) {
 	note, err := nc.NotesUseCase.CreateUserNote(user, req)
 	if err != nil {
 		controllerLog(c).WithError(err).Errorln("can't create note")
-		c.AbortWithStatusJSON(http.StatusInternalServerError, models2.DefaultErrorResponse{
+		c.AbortWithStatusJSON(http.StatusInternalServerError, models.DefaultErrorResponse{
 			Error: err.Error(),
 		})
 		return
@@ -76,13 +75,13 @@ func (nc NotesController) createNote(c *gin.Context) {
 // @Tags notes
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.Note
+// @Success 200 {object} models.DecodedNoteResponse
 // @Success 204
 // @Router /notes/:noteID [get]
 func (nc NotesController) getNote(c *gin.Context) {
 	user, err := GetUser(c, nc.UserUseCase)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, models2.DefaultErrorResponse{
+		c.AbortWithStatusJSON(http.StatusInternalServerError, models.DefaultErrorResponse{
 			Error: err.Error(),
 		})
 		return
@@ -92,7 +91,7 @@ func (nc NotesController) getNote(c *gin.Context) {
 
 	err = c.BindUri(&nodeURIParams)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, models2.DefaultErrorResponse{
+		c.AbortWithStatusJSON(http.StatusBadRequest, models.DefaultErrorResponse{
 			Error: err.Error(),
 		})
 		return
@@ -100,7 +99,7 @@ func (nc NotesController) getNote(c *gin.Context) {
 
 	node, err := nc.NotesUseCase.GetNote(user, nodeURIParams.NoteID)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, models2.DefaultErrorResponse{
+		c.AbortWithStatusJSON(http.StatusBadRequest, models.DefaultErrorResponse{
 			Error: err.Error(),
 		})
 		return
@@ -117,7 +116,7 @@ func (nc NotesController) getNote(c *gin.Context) {
 // @Tags notes
 // @Accept json
 // @Produce json
-// @Success 200 {json} []models.Note
+// @Success 200 {json} []models.DecodedNoteResponse
 // @Success 204
 // @Router /notes [get]
 func (nc NotesController) getNotes(c *gin.Context) {
@@ -130,7 +129,7 @@ func (nc NotesController) getNotes(c *gin.Context) {
 	notes, err := nc.NotesUseCase.GetUserNotes(user)
 	if err != nil {
 		controllerLog(c).WithError(err).Errorln("get notes error")
-		c.AbortWithStatusJSON(http.StatusInternalServerError, models2.DefaultErrorResponse{
+		c.AbortWithStatusJSON(http.StatusInternalServerError, models.DefaultErrorResponse{
 			Error: err.Error(),
 		})
 		return

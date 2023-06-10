@@ -8,7 +8,7 @@ import (
 )
 
 type Encrypter interface {
-	EncryptData(data string) (string, error)
+	EncryptData(data []byte) (string, error)
 	GetPublicKey() string
 }
 
@@ -20,7 +20,7 @@ type encrypter struct {
 	publicKey string
 }
 
-func (e encrypter) EncryptData(data string) (string, error) {
+func (e encrypter) EncryptData(data []byte) (string, error) {
 	publicKeyBlock, _ := pem.Decode([]byte(e.publicKey))
 
 	publicKey, err := x509.ParsePKIXPublicKey(publicKeyBlock.Bytes)
@@ -28,8 +28,7 @@ func (e encrypter) EncryptData(data string) (string, error) {
 		return "", err
 	}
 
-	plaintext := []byte(data)
-	ciphertext, err := rsa.EncryptPKCS1v15(rand.Reader, publicKey.(*rsa.PublicKey), plaintext)
+	ciphertext, err := rsa.EncryptPKCS1v15(rand.Reader, publicKey.(*rsa.PublicKey), data)
 
 	if err != nil {
 		return "", err

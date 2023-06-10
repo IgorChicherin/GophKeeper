@@ -1,40 +1,23 @@
 package usecases
 
-import "github.com/IgorChicherin/gophkeeper/internal/app/client/repositories"
+import (
+	"github.com/IgorChicherin/gophkeeper/internal/app/client/repositories"
+	"github.com/IgorChicherin/gophkeeper/internal/app/client/usecases/http"
+	"github.com/IgorChicherin/gophkeeper/internal/pkg/crypto/crypto509"
+	"github.com/IgorChicherin/gophkeeper/internal/pkg/db/models"
+)
 
 type NoteUseCase interface {
-	CreateUserNote()
-	GetUserNote()
-	GetAllUserNotes()
-	UpdateUserNote()
+	CreateUserNote(note models.Note) (models.Note, error)
+	GetUserNote(noteID int) (models.Note, error)
+	GetAllUserNotes() ([]models.Note, error)
+	UpdateUserNote(note models.Note) (models.Note, error)
 }
 
-type noteUseCase struct {
-	TokenRepo repositories.TokenRepository
-	CertRepo  repositories.CertRepository
-	NoteRepo  repositories.NotesRepository
-}
-
-func NewNoteUseCase(
+func NewHTTPNoteUseCase(
 	tokenRepo repositories.TokenRepository,
-	certRepo repositories.CertRepository,
 	noteRepo repositories.NotesRepository,
+	enc crypto509.Encrypter,
 ) NoteUseCase {
-	return noteUseCase{TokenRepo: tokenRepo, CertRepo: certRepo, NoteRepo: noteRepo}
-}
-
-func (n noteUseCase) CreateUserNote() {
-
-}
-
-func (n noteUseCase) GetUserNote() {
-
-}
-
-func (n noteUseCase) GetAllUserNotes() {
-
-}
-
-func (n noteUseCase) UpdateUserNote() {
-
+	return http.HTTPNoteUseCase{TokenRepo: tokenRepo, NoteRepo: noteRepo, Encrypter: enc}
 }

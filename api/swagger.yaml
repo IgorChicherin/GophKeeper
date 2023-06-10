@@ -1,4 +1,30 @@
 definitions:
+  models.CreateNoteRequest:
+    properties:
+      data:
+        type: string
+      data_type:
+        type: string
+      metadata:
+        type: string
+    type: object
+  models.DecodedNoteResponse:
+    properties:
+      created_at:
+        type: string
+      data:
+        type: string
+      data_type:
+        type: string
+      id:
+        type: integer
+      metadata:
+        type: string
+      updated_at:
+        type: string
+      userId:
+        type: integer
+    type: object
   models.DefaultErrorResponse:
     properties:
       error:
@@ -17,25 +43,6 @@ definitions:
         type: string
       token:
         type: string
-    type: object
-  models.Note:
-    properties:
-      created_at:
-        type: string
-      data:
-        items:
-          type: integer
-        type: array
-      data_type:
-        type: string
-      id:
-        type: integer
-      metadata:
-        type: string
-      updated_at:
-        type: string
-      userId:
-        type: integer
     type: object
   models.UserRequest:
     properties:
@@ -75,7 +82,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Note'
+            $ref: '#/definitions/models.DecodedNoteResponse'
         "204":
           description: No Content
       summary: get note
@@ -92,7 +99,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Note'
+            $ref: '#/definitions/models.CreateNoteRequest'
         "204":
           description: No Content
         "400":

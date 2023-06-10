@@ -59,7 +59,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Note"
+                            "$ref": "#/definitions/models.DecodedNoteResponse"
                         }
                     },
                     "204": {
@@ -85,7 +85,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Note"
+                            "$ref": "#/definitions/models.CreateNoteRequest"
                         }
                     },
                     "204": {
@@ -200,6 +200,46 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.CreateNoteRequest": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string"
+                },
+                "data_type": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DecodedNoteResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "string"
+                },
+                "data_type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "metadata": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.DefaultErrorResponse": {
             "type": "object",
             "properties": {
@@ -227,35 +267,6 @@ const docTemplate = `{
                 },
                 "token": {
                     "type": "string"
-                }
-            }
-        },
-        "models.Note": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "data_type": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "metadata": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
                 }
             }
         },

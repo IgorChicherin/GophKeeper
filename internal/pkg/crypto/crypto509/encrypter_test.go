@@ -95,7 +95,7 @@ func (suite *EncrypterServiceTestSuite) TestGetPublicKey() {
 }
 
 func (suite *EncrypterServiceTestSuite) TestEncryptData() {
-	encData, err := suite.enc.EncryptData(suite.msg)
+	encData, err := suite.enc.EncryptData([]byte(suite.msg))
 	suite.Assert().Equal(err, nil)
 
 	newDec, err := NewDecrypter([]byte(suite.privateKey))
