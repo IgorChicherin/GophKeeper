@@ -6,6 +6,7 @@ import (
 	"github.com/IgorChicherin/gophkeeper/internal/app/client/repositories"
 	"github.com/IgorChicherin/gophkeeper/internal/app/client/usecases"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/crypto/crypto509"
+	db_models "github.com/IgorChicherin/gophkeeper/internal/pkg/db/models"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/httpclient"
 	log "github.com/sirupsen/logrus"
 	"net/http"
@@ -40,12 +41,16 @@ func main() {
 
 	noteRepo := repositories.NewHTTPNoteRepository(baseURL, client)
 	notesUseCase := usecases.NewHTTPNoteUseCase(tokenRepo, noteRepo, enc)
-	//n := db_models.Note{
-	//	Data:     []byte("Hello!"),
-	//	Metadata: "test",
-	//	DataType: "BINARY",
-	//}
-	data, err := notesUseCase.GetUserNote(4)
+	n := db_models.Note{
+		Data:     []byte("Hello!"),
+		Metadata: "test",
+		DataType: "BINARY",
+	}
+
+	createdNote, err := notesUseCase.CreateUserNote(n)
+
+	fmt.Printf("%v", createdNote)
+	data, err := notesUseCase.GetUserNote(3)
 
 	if err != nil {
 		log.Panicln(err)
