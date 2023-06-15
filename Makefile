@@ -61,6 +61,9 @@ pack: pack-darwin-arm64 pack-darwin-amd64 pack-linux-amd64 pack-windows-amd64
 
 prepare-release: create-download-dir build pack remove-binares
 
+run-server:
+	docker-compose -f .\deployments\docker-compose.yml up --build
+
 install:
 	fyne install
 
@@ -68,6 +71,7 @@ help:
 	@echo "make <command>"
 	@echo "The commands are:"
 	@echo "install                  install on your system"
+	@echo "run-server               run server stack in docker"
 	@echo "prepare-release          build for each os, pack, mv and clean"
 	@echo "create-download-dir      create download and subdirs"
 	@echo "pack                     pack and mv for each os"

@@ -21,7 +21,8 @@ services:
 
   gophkeeper-server:
     build:
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: ./deployments/server/Dockerfile
     restart: always
     ports:
       - "3001:3001"
