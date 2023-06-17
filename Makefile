@@ -1,11 +1,9 @@
 PROJECTNAME=gophkeeper
 
-PATH_TO_DARWIN_ARM64=download/macos-arm64
-PATH_TO_DARWIN_AMD64=download/macos-amd64
-PATH_TO_LINUX_AMD64=download/linux-amd64
-PATH_TO_WINDOWS_AMD64=download/windows-amd64
+PATH_TO_DARWIN_AMD64=bin/macos-amd64
+PATH_TO_LINUX_AMD64=bin/linux-amd64
+PATH_TO_WINDOWS_AMD64=bin/windows-amd64
 
-PATH_FROM_DARWIN_ARM64=fyne-cross/dist/darwin-arm64
 PATH_FROM_DARWIN_AMD64=fyne-cross/dist/darwin-amd64
 PATH_FROM_LINUX_AMD64=fyne-cross/dist/linux-amd64
 PATH_FROM_WINDOWS_AMD64=fyne-cross/dist/windows-amd64
@@ -16,16 +14,13 @@ default: help
 
 create-download-dir:
 	mkdir -p download
-	mkdir -p $(PATH_TO_DARWIN_ARM64)
 	mkdir -p $(PATH_TO_DARWIN_AMD64)
 	mkdir -p $(PATH_TO_LINUX_AMD64)
 	mkdir -p $(PATH_TO_WINDOWS_AMD64)
 
-build-darwin-arm64:
-	fyne-cross darwin -arch arm64 -name $(PROJECTNAME) -app-id $(TEAM_ID).$(PROJECTNAME) ./cmd/client
 
 build-darwin-amd64:
-	fyne-cross darwin -arch amd64 -name $(PROJECTNAME) -app-id $(TEAM_ID).$(PROJECTNAME) ./cmd/client
+	fyne-cross darwin -arch amd64 -macosx-sdk-path="/app/SDKs/MacOSX13.sdk" -no-cache -debug -name $(PROJECTNAME) -app-id $(TEAM_ID).$(PROJECTNAME) ./cmd/client
 
 build-linux-amd64:
 	fyne-cross linux -arch amd64 -name $(PROJECTNAME) ./cmd/client
@@ -51,13 +46,13 @@ remove-binares:
 	rm -rf fyne-cross
 
 remove-archives:
-	rm -rf download
+	rm -rf bin
 
 clean: remove-archives remove-binares
 
-build: build-darwin-arm64 build-darwin-amd64 build-linux-amd64 build-windows-amd64
+build: build-linux-amd64 build-windows-amd64 build-darwin-amd64
 
-pack: pack-darwin-arm64 pack-darwin-amd64 pack-linux-amd64 pack-windows-amd64
+pack:  pack-linux-amd64 pack-windows-amd64 pack-darwin-amd64
 
 prepare-release: create-download-dir build pack remove-binares
 
@@ -76,7 +71,6 @@ help:
 	@echo "create-download-dir      create download and subdirs"
 	@echo "pack                     pack and mv for each os"
 	@echo "build                    build for each os"
-	@echo "build-darwin-arm64       build for macos arm"
 	@echo "build-darwin-amd64       build for macos intel"
 	@echo "build-linux-amd64        build for linux x86-64"
 	@echo "build-windows-amd64      build for windows x86-64"

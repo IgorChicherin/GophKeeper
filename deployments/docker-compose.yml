@@ -26,3 +26,13 @@ services:
     restart: always
     ports:
       - "3001:3001"
+
+  client-builder:
+      build:
+        context: ../
+        dockerfile: ./deployments/client/Dockerfile
+      volumes:
+        - ../bin:/app/bin
+      privileged: true
+#      entrypoint: ["tail", "-f", "/dev/null"]
+      entrypoint: ["sh", "/app/deployments/client/build.sh"]
