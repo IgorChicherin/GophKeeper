@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.5'
 
 services:
 
@@ -6,9 +6,9 @@ services:
     image: postgres
     restart: always
     environment:
-     - POSTGRES_DB=gophkeeper
-     - POSTGRES_USER=test
-     - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=gophkeeper
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
     ports:
       - "5432:5432"
 
@@ -18,21 +18,22 @@ services:
     ports:
       - "8088:8080"
 
-
   gophkeeper-server:
     build:
       context: ../
       dockerfile: ./deployments/server/Dockerfile
     restart: always
+    depends_on:
+      - db
     ports:
       - "3001:3001"
 
   client-builder:
-      build:
-        context: ../
-        dockerfile: ./deployments/client/Dockerfile
-      volumes:
-        - ../bin:/app/bin
-      privileged: true
-#      entrypoint: ["tail", "-f", "/dev/null"]
-      entrypoint: ["sh", "/app/deployments/client/build.sh"]
+    build:
+      context: ../
+      dockerfile: ./deployments/client/Dockerfile
+    volumes:
+      - ../bin:/app/bin
+    privileged: true
+#    entrypoint: ["tail", "-f", "/dev/null"]
+    entrypoint: [ "sh", "/app/deployments/client/build.sh" ]

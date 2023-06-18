@@ -20,7 +20,7 @@ create-download-dir:
 
 
 build-darwin-amd64:
-	fyne-cross darwin -arch amd64 -macosx-sdk-path="/app/SDKs/MacOSX13.sdk" -no-cache -debug -name $(PROJECTNAME) -app-id $(TEAM_ID).$(PROJECTNAME) ./cmd/client
+	fyne-cross darwin -arch amd64 -macosx-sdk-path="/app/sdk/MacOSX.sdk" -no-cache -debug -name $(PROJECTNAME) -app-id $(TEAM_ID).$(PROJECTNAME) ./cmd/client
 
 build-linux-amd64:
 	fyne-cross linux -arch amd64 -name $(PROJECTNAME) ./cmd/client
@@ -28,13 +28,8 @@ build-linux-amd64:
 build-windows-amd64:
 	fyne-cross windows -arch amd64 -name $(PROJECTNAME).exe -app-id $(TEAM_ID).$(PROJECTNAME) ./cmd/client
 
-pack-darwin-arm64:
-	create-dmg $(PATH_FROM_DARWIN_ARM64)/$(PROJECTNAME).app $(PATH_TO_DARWIN_ARM64) || true
-	mv $(PATH_TO_DARWIN_ARM64)/$(PROJECTNAME)\ 1.0.dmg $(PATH_TO_DARWIN_ARM64)/$(PROJECTNAME).dmg
-
 pack-darwin-amd64:
-	create-dmg $(PATH_FROM_DARWIN_AMD64)/$(PROJECTNAME).app $(PATH_TO_DARWIN_AMD64) || true
-	mv $(PATH_TO_DARWIN_AMD64)/$(PROJECTNAME)\ 1.0.dmg $(PATH_TO_DARWIN_AMD64)/$(PROJECTNAME).dmg
+	mv $(PATH_FROM_DARWIN_AMD64)/$(PROJECTNAME).app $(PATH_TO_DARWIN_AMD64)/$(PROJECTNAME).app
 
 pack-linux-amd64:
 	mv $(PATH_FROM_LINUX_AMD64)/$(PROJECTNAME).tar.xz $(PATH_TO_LINUX_AMD64)/$(PROJECTNAME).tar.xz
@@ -57,7 +52,13 @@ pack:  pack-linux-amd64 pack-windows-amd64 pack-darwin-amd64
 prepare-release: create-download-dir build pack remove-binares
 
 run-server:
-	docker-compose -f .\deployments\docker-compose.yml up --build
+	docker-compose -f ./deployments/docker-compose.yml up --build db adminer gophkeeper-server
+
+build-clients:
+	docker-compose -f ./deployments/docker-compose.yml up --build client-builder
+
+build-all:
+	docker-compose -f ./deployments/docker-compose.yml up --build
 
 install:
 	fyne install
