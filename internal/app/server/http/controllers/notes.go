@@ -1,11 +1,12 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/middlewares"
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/usecases"
 	"github.com/IgorChicherin/gophkeeper/internal/shared/models"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type getNoteURI struct {
@@ -118,7 +119,7 @@ func (nc NotesController) getNote(c *gin.Context) {
 // @Tags notes
 // @Accept json
 // @Produce json
-// @Success 200 204
+// @Success 200
 // @Router /notes/delete/:noteID [get]
 func (nc NotesController) deleteNote(c *gin.Context) {
 	user, err := GetUser(c, nc.UserUseCase)

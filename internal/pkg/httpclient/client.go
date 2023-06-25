@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/IgorChicherin/gophkeeper/internal/shared/models"
-	log "github.com/sirupsen/logrus"
 	"io"
 	"net/http"
+
+	"github.com/IgorChicherin/gophkeeper/internal/shared/models"
+	log "github.com/sirupsen/logrus"
 )
 
 type HTTPClientSync interface {

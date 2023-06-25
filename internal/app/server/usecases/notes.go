@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"encoding/base64"
+
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/repositories"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/crypto/crypto509"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/db/models"

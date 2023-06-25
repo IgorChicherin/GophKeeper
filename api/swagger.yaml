@@ -113,6 +113,44 @@ paths:
       summary: create note
       tags:
       - notes
+  /notes/delete/:noteID:
+    get:
+      consumes:
+      - application/json
+      description: delete user note
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: delete note
+      tags:
+      - notes
+  /notes/update/:noteID:
+    put:
+      consumes:
+      - application/json
+      description: update user note
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.CreateNoteRequest'
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.DefaultErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.DefaultErrorResponse'
+      summary: update note
+      tags:
+      - notes
   /user/login:
     post:
       consumes:

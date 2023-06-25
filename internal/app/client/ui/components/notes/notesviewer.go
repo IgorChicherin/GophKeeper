@@ -3,6 +3,8 @@ package notes
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
@@ -10,7 +12,6 @@ import (
 	ui_models "github.com/IgorChicherin/gophkeeper/internal/app/client/ui/models"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/db/models"
 	"github.com/nuttech/bell/v2"
-	"reflect"
 )
 
 func NewNotesViewer(

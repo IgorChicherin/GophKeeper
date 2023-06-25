@@ -3,11 +3,12 @@ package controllers
 import (
 	"errors"
 	"fmt"
+	"net/http"
+
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/usecases"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/db/models"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"net/http"
 )
 
 func controllerLog(c *gin.Context) *log.Entry {

@@ -3,6 +3,7 @@ package http
 import (
 	"encoding/base64"
 	"encoding/json"
+
 	"github.com/IgorChicherin/gophkeeper/internal/app/client/repositories"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/crypto/crypto509"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/db/models"

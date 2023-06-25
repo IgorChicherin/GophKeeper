@@ -1,9 +1,10 @@
 package middlewares
 
 import (
+	"net/http"
+
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/usecases"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func AuthMiddleware(userUseCase usecases.UserUseCase) gin.HandlerFunc {

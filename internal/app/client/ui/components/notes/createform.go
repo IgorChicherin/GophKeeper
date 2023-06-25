@@ -2,6 +2,9 @@ package notes
 
 import (
 	"encoding/json"
+	"os"
+	"strconv"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
@@ -11,8 +14,6 @@ import (
 	ui_models "github.com/IgorChicherin/gophkeeper/internal/app/client/ui/models"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/db/models"
 	"github.com/nuttech/bell/v2"
-	"os"
-	"strconv"
 )
 
 var types = []string{"AUTH", "TEXT", "BINARY", "CREDIT_CARD"}

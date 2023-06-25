@@ -2,6 +2,11 @@ package main
 
 import (
 	"context"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/router"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/authlib/sha256"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/config"
@@ -9,10 +14,6 @@ import (
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/db"
 	"github.com/jackc/pgx/v4"
 	log "github.com/sirupsen/logrus"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 func main() {

@@ -6,8 +6,9 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
-	log "github.com/sirupsen/logrus"
 	"os"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type CertsManager interface {

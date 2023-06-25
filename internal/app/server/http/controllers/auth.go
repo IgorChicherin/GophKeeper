@@ -2,9 +2,10 @@ package controllers
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/http/models"
 	"github.com/IgorChicherin/gophkeeper/internal/app/server/usecases"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )

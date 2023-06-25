@@ -1,11 +1,12 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/IgorChicherin/gophkeeper/internal/app/client/repositories"
 	"github.com/IgorChicherin/gophkeeper/internal/app/client/ui"
 	"github.com/IgorChicherin/gophkeeper/internal/app/client/usecases"
 	"github.com/IgorChicherin/gophkeeper/internal/pkg/httpclient"
-	"net/http"
 )
 
 func main() {
