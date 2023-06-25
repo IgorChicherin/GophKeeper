@@ -12,6 +12,7 @@ type NoteUseCase interface {
 	GetUserNote(noteID int) (models.Note, error)
 	GetAllUserNotes() ([]models.Note, error)
 	UpdateUserNote(note models.Note) (models.Note, error)
+	DeleteUserNote(noteID int) error
 }
 
 func NewHTTPNoteUseCase(

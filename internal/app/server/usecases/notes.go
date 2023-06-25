@@ -12,6 +12,8 @@ type NotesUseCase interface {
 	CreateUserNote(user models.User, req shared_models.CreateNoteRequest) (shared_models.DecodedNoteResponse, error)
 	GetNote(user models.User, noteID int) (shared_models.DecodedNoteResponse, error)
 	GetUserNotes(user models.User) ([]shared_models.DecodedNoteResponse, error)
+	UpdateUserNote(user models.User, noteID int, req shared_models.CreateNoteRequest) (shared_models.DecodedNoteResponse, error)
+	DeleteUserNote(user models.User, noteID int) error
 }
 
 type notesUseCase struct {
@@ -106,4 +108,41 @@ func (n notesUseCase) GetUserNotes(user models.User) ([]shared_models.DecodedNot
 	}
 
 	return []shared_models.DecodedNoteResponse{}, err
+}
+
+func (n notesUseCase) DeleteUserNote(user models.User, noteID int) error {
+	return n.NotesRepo.DeleteNote(user.UserID, noteID)
+}
+
+func (n notesUseCase) UpdateUserNote(user models.User, noteID int, req shared_models.CreateNoteRequest) (shared_models.DecodedNoteResponse, error) {
+	data, err := base64.StdEncoding.DecodeString(req.Data)
+	if err != nil {
+		return shared_models.DecodedNoteResponse{}, err
+	}
+
+	encodedNote, err := n.NotesRepo.UpdateNote(models.Note{
+		ID:       noteID,
+		UserID:   user.UserID,
+		Data:     data,
+		Metadata: req.Metadata,
+		DataType: req.DataType,
+	})
+
+	if err != nil {
+		return shared_models.DecodedNoteResponse{}, err
+	}
+	decodedBytes, err := n.Decrypter.DecryptData(encodedNote.Data)
+	if err != nil {
+		return shared_models.DecodedNoteResponse{}, err
+	}
+
+	return shared_models.DecodedNoteResponse{
+		ID:        encodedNote.ID,
+		UserID:    encodedNote.UserID,
+		Data:      base64.StdEncoding.EncodeToString(decodedBytes),
+		Metadata:  encodedNote.Metadata,
+		DataType:  encodedNote.DataType,
+		UpdatedAt: encodedNote.UpdatedAt,
+		CreatedAt: encodedNote.CreatedAt,
+	}, nil
 }

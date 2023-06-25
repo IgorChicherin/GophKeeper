@@ -12,6 +12,8 @@ type NotesRepository interface {
 	GetNote(userID, noteID int) (models.Note, error)
 	CreateNote(note models.Note) (models.Note, error)
 	GetUserNotesList(userID int) ([]models.Note, error)
+	DeleteNote(userID, noteID int) error
+	UpdateNote(note models.Note) (models.Note, error)
 }
 
 type notesRepository struct {
@@ -153,4 +155,62 @@ func (nr notesRepository) GetUserNotesList(userID int) ([]models.Note, error) {
 		notesList = append(notesList, note)
 	}
 	return notesList, nil
+}
+
+func (nr notesRepository) DeleteNote(userID, noteID int) error {
+	ctx := context.Background()
+
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	sql, args, err := psql.
+		Delete("user_data").
+		Where(sq.Eq{"user_id": userID, "id": noteID}).
+		ToSql()
+
+	if err != nil {
+		log.WithFields(log.Fields{"func": "DeleteNote"}).Errorln(err)
+		return err
+	}
+	_, err = nr.DBConn.Exec(ctx, sql, args...)
+
+	if err != nil {
+		log.WithFields(log.Fields{"func": "DeleteNote"}).Errorln(err)
+		return err
+	}
+
+	return nil
+}
+
+func (nr notesRepository) UpdateNote(note models.Note) (models.Note, error) {
+	ctx := context.Background()
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+
+	query := psql.
+		Update("user_data").
+		Set("data", note.Data).
+		Set("metadata", note.Metadata).
+		Set("data_type", note.DataType).
+		Where(sq.Eq{"user_id": note.UserID, "id": note.ID})
+
+	sql, args, err := query.ToSql()
+
+	if err != nil {
+		log.WithFields(log.Fields{"func": "UpdateNote"}).Errorln(err)
+		return models.Note{}, err
+	}
+
+	_, err = nr.DBConn.Exec(ctx, sql, args...)
+
+	if err != nil {
+		log.WithFields(log.Fields{"func": "UpdateNote"}).Errorln(err)
+		return models.Note{}, err
+	}
+
+	n, err := nr.GetNote(note.UserID, note.ID)
+
+	if err != nil {
+		log.WithFields(log.Fields{"func": "UpdateNote"}).Errorln(err)
+		return models.Note{}, err
+	}
+
+	return n, err
 }

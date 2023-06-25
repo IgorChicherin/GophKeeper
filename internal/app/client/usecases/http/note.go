@@ -85,7 +85,7 @@ func (n HTTPNoteUseCase) UpdateUserNote(note models.Note) (models.Note, error) {
 	noteData = base64.StdEncoding.EncodeToString([]byte(noteData))
 
 	noteDataRequest := shared_models.CreateNoteRequest{Metadata: note.Metadata, Data: noteData, DataType: note.DataType}
-	body, err := n.NoteRepo.UpdateNote(token, noteDataRequest)
+	body, err := n.NoteRepo.UpdateNote(token, note.ID, noteDataRequest)
 
 	var noteResponse models.Note
 	err = json.Unmarshal(body, &noteResponse)
@@ -94,4 +94,12 @@ func (n HTTPNoteUseCase) UpdateUserNote(note models.Note) (models.Note, error) {
 		return models.Note{}, err
 	}
 	return noteResponse, nil
+}
+
+func (n HTTPNoteUseCase) DeleteUserNote(noteID int) error {
+	token, err := n.TokenRepo.Get()
+	if err != nil {
+		return err
+	}
+	return n.NoteRepo.DeleteNote(token, noteID)
 }

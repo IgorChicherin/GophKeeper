@@ -45,14 +45,14 @@ func (ac AuthController) login(c *gin.Context) {
 
 	token, err := ac.UserUseCase.Login(userData.Login, userData.Password)
 
-	if err != nil {
-		controllerLog(c).WithError(err).Errorln("user repository error")
-		c.AbortWithStatus(http.StatusInternalServerError)
+	if errors.Is(err, usecases.ErrUserNotFound) || errors.Is(err, usecases.ErrUnauthorized) {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, map[string]string{"error": err.Error()})
 		return
 	}
 
-	if errors.Is(err, usecases.ErrUserNotFound) || errors.Is(err, usecases.ErrUnauthorized) {
-		c.AbortWithStatus(http.StatusUnauthorized)
+	if err != nil {
+		controllerLog(c).WithError(err).Errorln("user repository error")
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
