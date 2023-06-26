@@ -14,18 +14,13 @@ import (
 func NewLoginForm(
 	app fyne.App,
 	userUseCase usecases.UserUseCase,
-	defaultSrvAddr string,
 	events *bell.Events,
 ) *fyne.Container {
-	addr := widget.NewEntry()
-	addr.SetText(defaultSrvAddr)
-
 	login := widget.NewEntry()
 	pwd := widget.NewPasswordEntry()
 
 	form := &widget.Form{
 		Items: []*widget.FormItem{
-			{Text: "Server address", Widget: addr},
 			{Text: "Login", Widget: login},
 			{Text: "Password", Widget: pwd},
 		},

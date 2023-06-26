@@ -19,7 +19,7 @@ func NewLoginWindow(
 	w.Resize(fyne.NewSize(500, 200))
 	w.SetFixedSize(true)
 
-	loginForm := components.NewLoginForm(app, userUseCase, defaultSrvAddr, events)
+	loginForm := components.NewLoginForm(app, userUseCase, events)
 	content := container.New(layout.NewMaxLayout(), loginForm)
 
 	w.SetContent(content)
