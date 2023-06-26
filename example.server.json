@@ -1,0 +1,7 @@
+{
+  "database": "postgres://test:test@db:5432/gophkeeper?sslmode=disable",
+  "address": "0.0.0.0:3001",
+  "key" : "123123123",
+  "public_cert" : "public.pem",
+  "private_cert" : "private.pem"
+}
